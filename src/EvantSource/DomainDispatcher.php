@@ -18,7 +18,6 @@ class DomainDispatcher
 
         if (!isset($config['evantsource'][get_class($object)])) {
             throw new \Exception(sprintf('No dispatchees for %s', get_class($object)));
-            return;
         }
 
         $listeners = $this->container->get('config')['evantsource'][get_class($object)];
@@ -26,7 +25,9 @@ class DomainDispatcher
         if (is_string($listeners)) {
             $listener = $this->container->get($listeners);
             return $listener($object);
-        } else if (is_array($listeners)) {
+        }
+
+        if (is_array($listeners)) {
             foreach ($listeners as $listenerName) {
                 $listener = $this->container->get($listenerName);
                 $listener($object);
