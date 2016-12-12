@@ -1,0 +1,8 @@
+Submit to /c/<?= $channel['url'] ?>
+<br>
+
+<form method="post" action="<?= $this->url('channel/submit', ['channel' => $channel['url']]) ?>">
+    <img src="https://i.ytimg.com/vi/<?= $videoID ?>/hqdefault.jpg">
+    <input type="text" name="videos" value="<?= $videoID ?>">
+    <input type="submit" value="Submit Video">
+</form>

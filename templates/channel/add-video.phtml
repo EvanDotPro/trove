@@ -1,0 +1,11 @@
+<p><?= $this->routeParam('channel') ?></p>
+
+<form method="post" action="<?= $this->url('channel-add-video-form') ?>" class="auth">
+
+Video URL<br>
+<input type="text" name="videoUrl"><br>
+
+<input type="hidden" name="__csrf_value" value="<?= $this->csrfToken(); ?>">
+<input type="submit" value="Add Video">
+
+</form>

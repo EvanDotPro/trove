@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="800" height="600" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+  <g id="chest">
+      <rect x="110" y="120" width="140" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(-10)"/>
+      <rect x="110" y="140" width="140" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(-10)"/>
+      <rect x="110" y="160" width="140" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(-10)"/>
+
+      <rect x="49.5" y="49.5" width="60" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(25)"/>
+      <rect x="49.5" y="69.5" width="60" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(25)"/>
+      <rect x="49.5" y="89.5" width="60" height="20" stroke="black" fill="transparent" stroke-width="2" transform="skewY(25)"/>
+  </g>
+
+</svg>

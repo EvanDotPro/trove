@@ -1,0 +1,73 @@
+<style>
+ul.channels {
+    width: 100%;
+    overflow-x: hidden;
+    padding-left: 0px;
+}
+
+ul.channels > li {
+    display: block;
+    height: 75px;
+    width: 10000px;
+    position: relative;
+    margin-bottom: 10px;
+}
+ul.channels > li > a:hover {
+    color: #FFF;
+    transition: color .25s;
+}
+ul.channels > li > a {
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+    position: absolute;
+    left: 0px;
+    padding: 7px;
+    width: 100%;
+    color: #FFF;
+    font-size: 2.8em;
+    font-weight: bold;
+    text-decoration: none;
+}
+ul.channels > li > div:after {
+    clear: both;
+}
+ul.channels > li:hover > span {
+    color: #FFF;
+    transition: color .25s;
+}
+ul.channels > li > span {
+    color: #FFF;
+    position: absolute;
+    left: 0px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+
+}
+ul.channels > li:hover > div {
+    transition: opacity .25s;
+    opacity: .8;
+}
+ul.channels > li > div {
+    opacity: 0.35;
+    width: 125px;
+    height: 75px;
+    float: left;
+    background-position: 0px -13px;
+    background-size: 135px;
+}
+</style>
+
+<? if ($this->ident()): ?>
+    <a href="<?= $this->url('channel-create-form') ?>">Start Your Own Channel!</a>
+<? endif; ?>
+
+<ul class="channels">
+<? foreach($channels as $channel): ?>
+    <li>
+        <? foreach($channel->thumbnails as $thumbnail): ?>
+            <div style="background-image: url(<?= $thumbnail ?>;"></div>
+        <? endforeach ?>
+        <a href="<?= $this->url('channel', ['channel' => $channel->path]) ?>"><?= $channel->name ?></a> <span>/c/<?=$channel->path ?></span>
+    </li>
+<? endforeach ?>
+</ul>

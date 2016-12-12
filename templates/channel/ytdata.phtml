@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow:hidden;
+      }
+        #player { display: none; }
+
+    </style>
+    <title>Trove.video YouTube Data Collector</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1 id="nextvid"></h1>
+
+    <ul>
+        <li><strong>Title:</strong> <span id="title"></span></li>
+        <li><strong>Author:</strong> <span id="author"></span></li>
+        <li><strong>Duration:</strong> <span id="duration"></span></li>
+    </ul>
+    <div id="thumbnail"></div>
+
+    <div id="player"></div>
+
+<script>
+
+var tag = document.createElement( 'script' );
+
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName( 'script' )[0];
+firstScriptTag.parentNode.insertBefore( tag, firstScriptTag );
+
+var player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player( 'player', {
+        height: '390',
+        width: '640',
+        playerVars: {
+            'rel': 0,
+            'showinfo': 1,
+            'autoplay': 0,
+            'controls': 1
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    } );
+}
+
+function onPlayerReady(event) {
+    player.loadVideoById('7e5-0t0pTF0');
+    //setInterval(function() {
+    //    console.log('Video data...');
+    //}, 1000);
+
+
+}
+
+function onPlayerStateChange(event) {
+    if (player.getPlayerState() == 1) {
+        videoData = {
+            id: player.getVideoData().video_id,
+            title: player.getVideoData().title,
+            author: player.getVideoData().author,
+            duration: player.getDuration()
+        };
+        player.stopVideo();
+
+        $('#thumbnail').html('<img src="https://i.ytimg.com/vi/' + videoData.id + '/hqdefault.jpg">');
+        $('#title').text(videoData.title);
+        $('#duration').text(videoData.duration);
+        $('#author').text(videoData.author);
+    }
+}
+</script>
+  </body>
+</html>
+

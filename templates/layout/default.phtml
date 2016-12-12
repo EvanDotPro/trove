@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?= $this->headTitle('Roave')->setSeparator(' - ')->setAutoEscape(false) ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#FFFFF">
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.13.2/alt/video-js-cdn.min.css">
+
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.13.2/video.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.1.1/Youtube.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html5/jquery.history.min.js"></script>
+
+    <script type="text/javascript" src="/global.js"></script>
+    <script type="text/javascript" src="/player.js"></script>
+    <script type="text/javascript" src="/cast.js"></script>
+</head>
+<body>
+<?php $user = false; ?>
+    <nav>
+        <img src="/tv.png">
+        <? if ($this->ident()): ?>
+        Hi <?= $this->ident()->username ?>
+        <? endif; ?>
+
+        <input type="checkbox" id="show-menu" role="button" aria-label="Toggle Menu" autocomplete="off">
+
+        <label for="show-menu" class="show-menu">
+            <s class="bar"></s>
+            <s class="bar"></s>
+            <s class="bar"></s>
+        </label>
+
+        <ul>
+            <li id="cast"><a href="#">Cast</a></li>
+            <li><a id="skip" href="#">Skip Video</a></li>
+            <li><a href="<?= $this->url('home') ?>">Home</a></li>
+            <li><a href="<?= $this->url('channel/list') ?>">Channels</a></li>
+            <? if ($this->ident()): ?>
+                <li><a href="<?= $this->url('auth-logout') ?>">Logout</a></li>
+            <? else: ?>
+                <li><a href="<?= $this->url('auth-login-form') ?>">Login</a></li>
+                <li><a href="<?= $this->url('auth-register-form') ?>">Register</a></li>
+            <? endif ?>
+        </ul>
+    </nav>
+
+    <section>
+    <?= $this->content ?>
+    </section>
+
+
+    <footer>
+        &copy; Roave 2016
+    </footer>
+</body>
+</html>

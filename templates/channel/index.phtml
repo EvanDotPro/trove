@@ -1,0 +1,233 @@
+<style>
+
+section {
+    position: relative;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+}
+
+.video-js {
+    position: absolute;
+    height: 100% !important;
+    width: 100%;
+    overflow: visible;
+}
+.vjs-iframe-blocker {
+}
+
+.vjs-control {
+  color: #888 !important;
+}
+.video-js .vjs-control:before {
+}
+.vjs-control-bar {
+    font-size: 1.5em;
+    transform: translateY(3em);
+    background-color: rgba(255,255,255,1) !important;
+}
+.vjs-fullscreen .vjs-control-bar {
+    transform: translateY(0em) !important;
+    background-color: rgba(255,255,255,.9) !important;
+}
+.video-js .vjs-time-control .vjs-remaining-time-display {
+}
+.vjs-play-progress, .vjs-slider-bar {
+    background-color: rgba(115,133,159,.75) !important;
+}
+
+
+.video-js .vjs-volume-level:before {
+    font-size: 1em;
+}
+.vjs-volume-menu-button-vertical .vjs-menu .vjs-menu-content {
+    background-color: #FFF !important;
+}
+.vjs-volume-menu-button-vertical .vjs-menu .vjs-menu-content .vjs-volume-bar {
+    background-color: rgba(115,133,159,.5) !important;
+    margin: 1em auto !important;
+    height: 6.5em !important;
+}
+.vjs-volume-menu-button-vertical .vjs-menu .vjs-menu-content .vjs-volume-level {
+    background-color: rgba(115,133,159,.75) !important;
+}
+
+</style>
+
+<video
+controls
+id="video-player"
+class="video-js vjs-big-play-centered"
+data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=8tPnX7OPo0Q"}], "youtube": {"iv_load_policy": 3, "playsinline": 1, "enablecastapi": 0}, "controlBar": { "volumeMenuButton": { "inline": false, "vertical": true } } }'>
+</video>
+
+
+  <table id="wrapper" style="display: none;">
+	<tr>
+		<td>
+			<form method="get" action="JavaScript:update();">
+				<input id="input" class="border" type="text" size="30" onwebkitspeechchange="transcribe(this.value)" x-webkit-speech/>
+			</form>
+		</td>
+	</tr>
+  </table>
+
+
+<script>
+
+$(document).ready(function() {
+    videojs("video-player").ready(function(){
+        player = new TvPlayer(this);
+        player.setChannel('<?= $this->routeParam('channel') ?>');
+
+        <? if ($this->routeParam('video')): ?>
+            player.playSpecificVideo('<?= $this->routeParam('video') ?>');
+        <? endif; ?>
+
+        if (AUTOPLAY) {
+            player.play();
+        }
+
+        $('#skip').on('click', function() {
+            player.playNextVideo();
+            //console.log('Skipping');
+        });
+    });
+});
+
+var applicationID = 'AA15CD2D';
+var namespace = 'urn:x-cast:com.google.cast.sample.helloworld';
+var session = null;
+
+window['__onGCastApiAvailable'] = function(loaded, errorInfo) {
+  if (loaded) {
+      console.log("GOOGLE CAST AVAILABLE!");
+      initializeCastApi();
+  } else {
+    console.log(errorInfo);
+  }
+}
+
+/**
+ * initialization
+ */
+function initializeCastApi() {
+  var sessionRequest = new chrome.cast.SessionRequest(applicationID);
+  var apiConfig = new chrome.cast.ApiConfig(sessionRequest,
+    sessionListener,
+    receiverListener);
+  chrome.cast.initialize(apiConfig, onInitSuccess, onError);
+};
+/**
+ * initialization success callback
+ */
+function onInitSuccess() {
+  appendMessage("onInitSuccess");
+}
+/**
+ * initialization error callback
+ */
+function onError(message) {
+  appendMessage("onError: "+JSON.stringify(message));
+}
+/**
+ * generic success callback
+ */
+function onSuccess(message) {
+  appendMessage("onSuccess: "+message);
+}
+/**
+ * callback on success for stopping app
+ */
+function onStopAppSuccess() {
+  appendMessage('onStopAppSuccess');
+}
+/**
+ * session listener during initialization
+ */
+function sessionListener(e) {
+  appendMessage('New session ID:' + e.sessionId);
+  session = e;
+  session.addUpdateListener(sessionUpdateListener);  
+  session.addMessageListener(namespace, receiverMessage);
+}
+/**
+ * listener for session updates
+ */
+function sessionUpdateListener(isAlive) {
+  var message = isAlive ? 'Session Updated' : 'Session Removed';
+  message += ': ' + session.sessionId;
+  appendMessage(message);
+  if (!isAlive) {
+    session = null;
+  }
+};
+/**
+ * utility function to log messages from the receiver
+ * @param {string} namespace The namespace of the message
+ * @param {string} message A message string
+ */
+function receiverMessage(namespace, message) {
+  appendMessage("receiverMessage: "+namespace+", "+message);
+};
+/**
+ * receiver listener during initialization
+ */
+function receiverListener(e) {
+  if( e === 'available' ) {
+    appendMessage("receiver found");
+  }
+  else {
+    appendMessage("receiver list empty");
+  }
+}
+/**
+ * stop app/session
+ */
+function stopApp() {
+  session.stop(onStopAppSuccess, onError);
+}
+/**
+ * send a message to the receiver using the custom namespace
+ * receiver CastMessageBus message handler will be invoked
+ * @param {string} message A message string
+ */
+function sendMessage(message) {
+  if (session!=null) {
+    session.sendMessage(namespace, message, onSuccess.bind(this, "Message sent: " + message), onError);
+  }
+  else {
+    chrome.cast.requestSession(function(e) {
+        session = e;
+        session.sendMessage(namespace, message, onSuccess.bind(this, "Message sent: " + message), onError);
+      }, onError);
+  }
+}
+/**
+ * append message to debug message window
+ * @param {string} message A message string
+ */
+function appendMessage(message) {
+  console.log(message);
+}
+/**
+ * utility function to handle text typed in by user in the input field
+ */
+function update() {
+  sendMessage(document.getElementById("input").value);
+}
+/**
+ * handler for the transcribed text from the speech input
+ * @param {string} words A transcibed speech string
+ */
+function transcribe(words) {
+  sendMessage(words);
+}
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}
+//console.log(getCookie('PHPSESSID'));
+
+</script>
