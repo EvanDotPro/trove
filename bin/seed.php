@@ -174,7 +174,28 @@ foreach ($channels as $channel) {
 
 
 $dispatcher = $container->get(EvantSource\DomainDispatcher::class);
+$appendStore = new EvantSource\PhpAppendStore('data/event_store');
+$serializer = new EvantSource\MessageSerializer;
 
 foreach ($events as $event) {
+    $class = get_class($event);
+
+    switch ($class) {
+        case UserRegistered::class:
+            $id = $event->userId;
+            break;
+        case Tv\Channel\Event\ChannelCreated::class:
+            $id = $event->channelId;
+            break;
+        case Tv\Channel\Event\VideoAddedToChannel::class:
+            $id = $event->videoId;
+            break;
+        case Tv\Channel\Event\ChannelFeatured::class:
+            $id = \Ramsey\Uuid\Uuid::uuid4()->toString();
+            break;
+    }
+
+    $payload = $serializer->serialize($event);
+    $appendStore->append($id, $payload, ['type' => $class], 0);
     $dispatcher->dispatch($event);
 }

@@ -32,6 +32,19 @@ sql;
         return $stmt->fetch();
     }
 
+    public function videoCountByChannel($channelId)
+    {
+        $query = <<<sql
+SELECT COUNT(1) AS video_count
+FROM read_video
+WHERE channelId = :channelId;
+sql;
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindValue('channelId', $channelId);
+        $stmt->execute();
+        return $stmt->fetch()->video_count;
+    }
+
     public function findThumbnailsByChannel($channelId, $quantity)
     {
         $query = <<<sql

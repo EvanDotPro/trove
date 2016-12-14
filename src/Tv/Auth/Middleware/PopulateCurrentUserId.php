@@ -16,14 +16,10 @@ final class PopulateCurrentUserId
 
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new \Exception('Authenticate required.');
-        }
-
         $target  = $request->getAttribute('current_user_id_field', 'userId');
         $payload = $request->getAttribute('cqrs_payload', []);
 
-        $payload[$target] = $this->authService->getIdentity()->id;
+        $payload[$target] = $this->authService->hasIdentity() ? $this->authService->getIdentity()->id : null;
 
         return $next($request->withAttribute('cqrs_payload', $payload), $response);
     }

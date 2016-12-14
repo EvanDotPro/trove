@@ -7,6 +7,6 @@ class Name
 {
     public static function validator()
     {
-        return v::alnum('-_')->length(3, 15);
+        return v::alnum('-_')->length(3, 25);
     }
 }

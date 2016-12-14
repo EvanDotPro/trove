@@ -71,7 +71,7 @@ return [
                     'input_validator' => Tv\Channel\Validator\CreateChannel::class,
                     'cqrs_target' => Tv\Channel\Command\CreateChannel::class,
                     'new_uuid_field' => 'channelId',
-                    'redirect_route' => 'channel',
+                    'redirect_route' => 'channel-manage',
                     // set the route param 'channel' (of the channel route) to the 'path' post param value
                     'redirect_params' => 'channel:path',
                 ],
@@ -137,12 +137,15 @@ return [
                 Tv\Auth\Middleware\PopulateCurrentUserId::class,
                 Tv\Channel\Middleware\PopulateChannelIdFromPath::class,
                 Tv\App\Middleware\DispatchCqrsRequest::class,
+                Tv\App\Middleware\Redirect::class,
             ],
             'allowed_methods' => ['POST'],
             'options' => [
                 'defaults' => [
                     'new_uuid_field' => 'videoId',
                     'cqrs_target' => Tv\Channel\Command\AddVideoToChannel::class,
+                    'redirect_route' => 'channel-manage',
+                    'redirect_with_current_route_params' => true,
                 ],
             ],
         ],
@@ -150,14 +153,9 @@ return [
             'name' => 'channel-manage',
             'path' => '/c/{channel:[^/]+}/manage',
             'middleware' => [
-                Tv\App\Middleware\StaticView::class,
+                Tv\Channel\Action\Manage::class,
             ],
             'allowed_methods' => ['GET'],
-            'options' => [
-                'defaults' => [
-                    'view' => 'channel::manage',
-                ],
-            ],
         ],
         [
             'name' => 'cast',

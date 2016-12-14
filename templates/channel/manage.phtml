@@ -1,1 +1,8 @@
-manage channel
+<h1>Manage /c/<?= $this->routeParam('channel') ?></h1>
+
+<ul>
+    <li><a href="<?= $this->url('channel-add-video-form', ['channel' => $this->routeParam('channel')]) ?>">Add Video</a></li>
+    <li><a href="<?= $this->url('channel', ['channel' => $this->routeParam('channel')]) ?>">Watch Channel</a></li>
+</ul>
+
+Your channel has <?= $vidcount ?> videos.

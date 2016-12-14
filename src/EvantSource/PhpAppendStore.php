@@ -14,8 +14,17 @@ class PhpAppendStore
     {
         $version = $expectedVersion + 1;
 
+        $time = microtime(true);
+
+        if (false === strpos($time, '.')) {
+            $time .= '.0000';
+        }
+
+        $when = \DateTimeImmutable::createFromFormat('U.u', $time);
+
         $row = [
             'type'    => $metadata['type'],
+            'when' => $when->format('Y-m-d\TH:i:s.u'),
             'version' => $version,
             'payload' => $data,
         ];
